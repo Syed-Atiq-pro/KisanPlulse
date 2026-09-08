@@ -7,6 +7,7 @@ import '../features/auth/presentation/signup_page.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
 import '../features/farms/presentation/farms_page.dart';
 import '../features/farms/presentation/farm_details_page.dart';
+import '../features/weather/presentation/weather_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -24,6 +25,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
     GoRoute(path: '/farms', builder: (context, state) => const FarmsPage()),
     GoRoute(path: '/farms/:id', builder: (context, state) => FarmDetailsPage(farmId: state.pathParameters['id']!, farmName: state.uri.queryParameters['name'] ?? 'Farm')),
+    GoRoute(path: '/weather', builder: (context, state) => const WeatherPage()),
   ],
 );
 
