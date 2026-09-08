@@ -30,8 +30,8 @@ class CropManagementPage extends ConsumerWidget {
       content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: name, decoration: const InputDecoration(labelText: 'Crop name', hintText: 'e.g. Tomato')),
         TextField(controller: variety, decoration: const InputDecoration(labelText: 'Variety (optional)')),
-        DropdownButtonFormField<String>(value: status, decoration: const InputDecoration(labelText: 'Status'), items: statuses.map((v) => DropdownMenuItem(value: v, child: Text(_pretty(v)))).toList(), onChanged: (v) => setDialogState(() => status = v!)),
-        DropdownButtonFormField<String>(value: stage, decoration: const InputDecoration(labelText: 'Growth stage'), items: stages.map((v) => DropdownMenuItem(value: v, child: Text(_pretty(v)))).toList(), onChanged: (v) => setDialogState(() => stage = v!)),
+        DropdownButtonFormField<String>(initialValue: status, decoration: const InputDecoration(labelText: 'Status'), items: statuses.map((v) => DropdownMenuItem(value: v, child: Text(_pretty(v)))).toList(), onChanged: (v) => setDialogState(() => status = v!)),
+        DropdownButtonFormField<String>(initialValue: stage, decoration: const InputDecoration(labelText: 'Growth stage'), items: stages.map((v) => DropdownMenuItem(value: v, child: Text(_pretty(v)))).toList(), onChanged: (v) => setDialogState(() => stage = v!)),
         ListTile(contentPadding: EdgeInsets.zero, title: Text(planting == null ? 'Planting date' : 'Planted ${DateFormat.yMMMd().format(planting!)}'), trailing: const Icon(Icons.calendar_today_rounded), onTap: () async { final date = await showDatePicker(context: context, firstDate: DateTime(2020), lastDate: DateTime(2100), initialDate: planting ?? DateTime.now()); if (date != null) setDialogState(() => planting = date); }),
         ListTile(contentPadding: EdgeInsets.zero, title: Text(harvest == null ? 'Expected harvest date' : 'Harvest ${DateFormat.yMMMd().format(harvest!)}'), trailing: const Icon(Icons.event_available_rounded), onTap: () async { final date = await showDatePicker(context: context, firstDate: planting ?? DateTime.now(), lastDate: DateTime(2100), initialDate: harvest ?? (planting ?? DateTime.now()).add(const Duration(days: 90))); if (date != null) setDialogState(() => harvest = date); }),
         TextField(controller: yieldController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Expected yield (kg)')),
@@ -48,28 +48,19 @@ class CropManagementPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final crops = ref.watch(cropsProvider(fieldId));
-    return Scaffold(appBar: AppBar(title: Text(fieldName)), floatingActionButton: FloatingActionButton.extended(onPressed: () => _addCrop(context, ref), icon: const Icon(Icons.add), label: const Text('Add crop')), body: RefreshIndicator(onRefresh: () async => ref.invalidate(cropsProvider(fieldId)), child: ListView(padding: const EdgeInsets.all(20), children: [Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [const CircleAvatar(child: Icon(Icons.crop_square_rounded)), const SizedBox(width: 14), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(fieldName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 19)), const SizedBox(height: 4), Text('${areaAcres.toStringAsFixed(1)} acres • Crop lifecycle')]))]))), const SizedBox(height: 14), crops.when(loading: () => const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator())), error: (e, _) => Padding(padding: const EdgeInsets.all(24), child: Text('Could not load crops.\n$e')), data: (items) => items.isEmpty ? const Padding(padding: EdgeInsets.all(40), child: Center(child: Text('No crops planned for this field yet. Add a crop to start tracking its lifecycle.', textAlign: TextAlign.center))) : Column(children: items.map((crop) => _CropCard(crop: crop, fieldId: fieldId)).toList())), ])));
-  }
-}
-
-class _CropCard extends ConsumerWidget {
-  const _CropCard({required this.crop, required this.fieldId});
-  final Crop crop;
-  final String fieldId;
-
-  Future<void> _advance(WidgetRef ref) async {
-    const stages = CropManagementPage.stages;
-    final index = stages.indexOf(crop.stage);
-    final nextStage = index >= 0 && index < stages.length - 1 ? stages[index + 1] : crop.stage;
-    if (nextStage == crop.stage) return;
-    final nextStatus = nextStage == 'ready_to_harvest' ? 'growing' : crop.status;
-    await CropRepository(Supabase.instance.client).updateStatus(crop.id, status: nextStatus, stage: nextStage);
-    ref.invalidate(cropsProvider(fieldId));
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final days = crop.expectedHarvestDate == null ? null : crop.expectedHarvestDate!.difference(DateTime.now()).inDays;
-    return Card(margin: const EdgeInsets.only(bottom: 12), child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [CircleAvatar(child: Icon(crop.status == 'harvested' ? Icons.check_rounded : Icons.eco_rounded)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(crop.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)), if (crop.variety != null) Text(crop.variety!)])), Chip(label: Text(CropManagementPage._pretty(crop.status)))]), const SizedBox(height: 14), Text(CropManagementPage._pretty(crop.stage), style: const TextStyle(fontWeight: FontWeight.w700)), const SizedBox(height: 8), LinearProgressIndicator(value: (CropManagementPage.stages.indexOf(crop.stage) + 1) / CropManagementPage.stages.length), const SizedBox(height: 10), Wrap(spacing: 8, runSpacing: 8, children: [if (crop.plantingDate != null) Chip(avatar: const Icon(Icons.event_rounded, size: 16), label: Text('Planted ${DateFormat.MMMd().format(crop.plantingDate!)}')), if (days != null) Chip(avatar: const Icon(Icons.schedule_rounded, size: 16), label: Text(days < 0 ? '${-days}d overdue' : '${days}d to harvest')), if (crop.expectedYieldKg != null) Chip(avatar: const Icon(Icons.scale_rounded, size: 16), label: Text('${crop.expectedYieldKg!.toStringAsFixed(0)} kg expected'))]), if (crop.notes != null && crop.notes!.isNotEmpty) ...[const SizedBox(height: 8), Text(crop.notes!)], if (crop.stage != 'ready_to_harvest' && crop.status != 'harvested') ...[const SizedBox(height: 10), Align(alignment: Alignment.centerRight, child: OutlinedButton.icon(onPressed: () => _advance(ref), icon: const Icon(Icons.arrow_forward_rounded), label: const Text('Advance stage')))], ])));
+    return Scaffold(
+      appBar: AppBar(title: Text(fieldName)),
+      floatingActionButton: FloatingActionButton.extended(onPressed: () => _addCrop(context, ref), icon: const Icon(Icons.add), label: const Text('Add crop')),
+      body: crops.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Could not load crops: $error')),
+        data: (items) => items.isEmpty
+            ? const Center(child: Text('No crops planned yet.'))
+            : ListView.separated(padding: const EdgeInsets.all(16), itemCount: items.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (context, index) {
+                final crop = items[index];
+                return Card(child: ListTile(title: Text(crop.name, style: const TextStyle(fontWeight: FontWeight.w700)), subtitle: Text('${_pretty(crop.stage)} • ${crop.expectedYieldKg?.toStringAsFixed(0) ?? '—'} kg expected'), trailing: Chip(label: Text(_pretty(crop.status))));
+              }),
+      ),
+    );
   }
 }
