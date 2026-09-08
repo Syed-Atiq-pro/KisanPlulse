@@ -13,15 +13,15 @@ class DashboardPage extends StatelessWidget {
       ('Crop Health', Icons.eco_rounded, 'AI disease detection', '/disease'),
       ('Weather', Icons.cloud_rounded, 'Forecast and alerts', '/weather'),
       ('Irrigation', Icons.water_drop_rounded, 'Weather-based water planning', '/irrigation'),
+      ('Market', Icons.storefront_rounded, 'Mandi prices and alerts', '/market'),
       ('Expenses', Icons.account_balance_wallet_rounded, 'Track farm finances', null),
-      ('Market', Icons.storefront_rounded, 'Prices and opportunities', null),
     ];
     return Scaffold(
       appBar: AppBar(title: const Text('AgriSense', style: TextStyle(fontWeight: FontWeight.w800)), actions: [IconButton(onPressed: () => _logout(context), icon: const Icon(Icons.logout_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Text('Good morning, Farmer', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
         const SizedBox(height: 6), const Text('Your farm intelligence dashboard'), const SizedBox(height: 22),
-        Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [CircleAvatar(radius: 28, backgroundColor: Theme.of(context).colorScheme.primaryContainer, child: const Icon(Icons.agriculture_rounded)), const SizedBox(width: 16), const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Farm health', style: TextStyle(fontWeight: FontWeight.w700)), SizedBox(height: 6), Text('Add a farm, field and crop to start building your farm intelligence profile.')]))]))),
+        Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [CircleAvatar(radius: 28, backgroundColor: Theme.of(context).colorScheme.primaryContainer, child: const Icon(Icons.agriculture_rounded)), const SizedBox(width: 16), const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Farm intelligence', style: TextStyle(fontWeight: FontWeight.w700)), SizedBox(height: 6), Text('Manage your farm, monitor crop health, plan irrigation and compare market opportunities.')]))]))),
         const SizedBox(height: 22),
         GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1.25), itemCount: cards.length, itemBuilder: (context, index) { final item = cards[index]; return Card(child: InkWell(borderRadius: BorderRadius.circular(16), onTap: item.$4 == null ? null : () => context.go(item.$4!), child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [Icon(item.$2, size: 30), const SizedBox(height: 10), Text(item.$1, style: const TextStyle(fontWeight: FontWeight.w700)), const SizedBox(height: 4), Text(item.$3, maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall)])))); }),
       ]),
