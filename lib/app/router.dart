@@ -11,6 +11,7 @@ import '../features/farms/presentation/crop_management_page.dart';
 import '../features/weather/presentation/weather_page.dart';
 import '../features/disease/presentation/disease_page.dart';
 import '../features/disease/presentation/disease_history_page.dart';
+import '../features/irrigation/presentation/irrigation_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -32,6 +33,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/weather', builder: (context, state) => const WeatherPage()),
     GoRoute(path: '/disease', builder: (context, state) => const DiseasePage()),
     GoRoute(path: '/disease/history', builder: (context, state) => const DiseaseHistoryPage()),
+    GoRoute(path: '/irrigation', builder: (context, state) => const IrrigationPage()),
   ],
 );
 
