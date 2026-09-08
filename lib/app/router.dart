@@ -17,6 +17,7 @@ import '../features/market/presentation/market_page.dart';
 import '../features/market/presentation/market_analytics_page.dart';
 import '../features/finance/presentation/finance_page.dart';
 import '../features/finance/presentation/finance_analytics_page.dart';
+import '../features/notifications/presentation/notifications_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -32,6 +33,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
     GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
+    GoRoute(path: '/notifications', builder: (context, state) => const NotificationsPage()),
     GoRoute(path: '/farms', builder: (context, state) => const FarmsPage()),
     GoRoute(path: '/farms/:id', builder: (context, state) => FarmDetailsPage(farmId: state.pathParameters['id']!, farmName: state.uri.queryParameters['name'] ?? 'Farm')),
     GoRoute(path: '/farms/:farmId/fields/:fieldId', builder: (context, state) => CropManagementPage(fieldId: state.pathParameters['fieldId']!, fieldName: state.uri.queryParameters['name'] ?? 'Field', areaAcres: double.tryParse(state.uri.queryParameters['area'] ?? '') ?? 0)),
