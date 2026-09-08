@@ -32,12 +32,12 @@ grant select, insert, update, delete on public.soil_profiles to authenticated;
 grant select, insert, update, delete on public.irrigation_records to authenticated;
 
 create policy soil_profiles_own on public.soil_profiles for all to authenticated
-using (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.user_id = (select auth.uid())))
-with check (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.user_id = (select auth.uid())));
+using (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.owner_id = (select auth.uid())))
+with check (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.owner_id = (select auth.uid())));
 
 create policy irrigation_records_own on public.irrigation_records for all to authenticated
-using (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.user_id = (select auth.uid())))
-with check (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.user_id = (select auth.uid())));
+using (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.owner_id = (select auth.uid())))
+with check (exists (select 1 from public.fields f join public.farms fm on fm.id = f.farm_id where f.id = field_id and fm.owner_id = (select auth.uid())));
 
 create index if not exists soil_profiles_field_recorded_idx on public.soil_profiles(field_id, recorded_at desc);
 create index if not exists irrigation_records_field_date_idx on public.irrigation_records(field_id, irrigation_date desc);
