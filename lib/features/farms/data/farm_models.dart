@@ -31,12 +31,17 @@ class Field {
 }
 
 class Crop {
-  const Crop({required this.id, required this.fieldId, required this.name, this.variety, this.status = 'planned'});
+  const Crop({required this.id, required this.fieldId, required this.name, this.variety, this.status = 'planned', this.stage = 'seedling', this.plantingDate, this.expectedHarvestDate, this.notes, this.expectedYieldKg});
   final String id;
   final String fieldId;
   final String name;
   final String? variety;
   final String status;
+  final String stage;
+  final DateTime? plantingDate;
+  final DateTime? expectedHarvestDate;
+  final String? notes;
+  final double? expectedYieldKg;
 
   factory Crop.fromMap(Map<String, dynamic> map) => Crop(
         id: map['id'] as String,
@@ -44,5 +49,10 @@ class Crop {
         name: map['name'] as String,
         variety: map['variety'] as String?,
         status: map['status'] as String? ?? 'planned',
+        stage: map['stage'] as String? ?? 'seedling',
+        plantingDate: map['planting_date'] == null ? null : DateTime.tryParse(map['planting_date'] as String),
+        expectedHarvestDate: map['expected_harvest_date'] == null ? null : DateTime.tryParse(map['expected_harvest_date'] as String),
+        notes: map['notes'] as String?,
+        expectedYieldKg: (map['expected_yield_kg'] as num?)?.toDouble(),
       );
 }
