@@ -14,6 +14,7 @@ import '../features/disease/presentation/disease_history_page.dart';
 import '../features/irrigation/presentation/irrigation_page.dart';
 import '../features/assistant/presentation/assistant_page.dart';
 import '../features/market/presentation/market_page.dart';
+import '../features/market/presentation/market_analytics_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -38,6 +39,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/irrigation', builder: (context, state) => const IrrigationPage()),
     GoRoute(path: '/assistant', builder: (context, state) => const AssistantPage()),
     GoRoute(path: '/market', builder: (context, state) => const MarketPage()),
+    GoRoute(path: '/market/analytics', builder: (context, state) => MarketAnalyticsPage(commodity: state.uri.queryParameters['commodity'] ?? 'Tomato')),
   ],
 );
 
