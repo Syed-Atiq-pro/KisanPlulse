@@ -30,6 +30,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   }
 
   Future<void> _loadConversation(String id) async {
+    if (id.isEmpty) return;
     final items = await ref.read(assistantRepositoryProvider).listMessages(id);
     if (!mounted) return;
     setState(() { conversationId = id; messages = items; });
@@ -43,7 +44,10 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     final id = conversationId;
     if (id == null || !mounted) return;
     input.clear();
-    setState(() { loading = true; messages = [...messages, AssistantMessage(id: 'local-${DateTime.now().microsecondsSinceEpoch}', role: 'user', content: text, createdAt: DateTime.now())]; });
+    setState(() {
+      loading = true;
+      messages = [...messages, AssistantMessage(id: 'local-${DateTime.now().microsecondsSinceEpoch}', role: 'user', content: text, createdAt: DateTime.now())];
+    });
     _scrollDown();
     try {
       final answer = await ref.read(assistantRepositoryProvider).ask(conversationId: id, message: text);
@@ -51,12 +55,21 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
       setState(() { messages = [...messages, answer]; loading = false; });
     } catch (_) {
       if (!mounted) return;
-      setState(() { loading = false; messages = [...messages, AssistantMessage(id: 'error-${DateTime.now().microsecondsSinceEpoch}', role: 'assistant', content: 'I could not reach the farming assistant. Check your connection and AI configuration, then try again.', createdAt: DateTime.now())]; });
+      setState(() {
+        loading = false;
+        messages = [...messages, AssistantMessage(id: 'error-${DateTime.now().microsecondsSinceEpoch}', role: 'assistant', content: 'I could not reach the farming assistant. Check your connection and AI configuration, then try again.', createdAt: DateTime.now())];
+      });
     }
     _scrollDown();
   }
 
-  void _scrollDown() { WidgetsBinding.instance.addPostFrameCallback((_) { if (scroll.hasClients) scroll.animateTo(scroll.position.maxScrollExtent, duration: const Duration(milliseconds: 250), curve: Curves.easeOut); }); }
+  void _scrollDown() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scroll.hasClients) {
+        scroll.animateTo(scroll.position.maxScrollExtent, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +82,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           PopupMenuButton<String>(
             onSelected: _loadConversation,
             itemBuilder: (context) {
-              final conversations = ref.read(conversationsProvider).valueOrNull ?? [];
+              final conversations = ref.read(conversationsProvider).valueOrNull ?? <AssistantConversation>[];
               return [
                 if (conversations.isEmpty) const PopupMenuItem<String>(enabled: false, value: '', child: Text('No previous chats')),
                 ...conversations.map((c) => PopupMenuItem<String>(value: c.id, child: Text(c.title ?? 'Farm advice', overflow: TextOverflow.ellipsis))),
