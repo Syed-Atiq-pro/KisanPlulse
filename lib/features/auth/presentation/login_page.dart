@@ -16,7 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   bool obscure = true;
 
   Future<void> _signIn() async {
-    if (email.text.trim().isEmpty || password.text.isEmpty) return;
+    if (email.text.trim().isEmpty || password.text.isEmpty) {
+      _message('Enter your email and password.');
+      return;
+    }
     setState(() => loading = true);
     try {
       await Supabase.instance.client.auth.signInWithPassword(
@@ -25,12 +28,16 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (mounted) context.go('/dashboard');
     } on AuthException catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      _message(e.message);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to sign in: $e')));
+      _message('Unable to sign in: $e');
     } finally {
       if (mounted) setState(() => loading = false);
     }
+  }
+
+  void _message(String text) {
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
   @override
@@ -66,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 22),
                 SizedBox(width: double.infinity, height: 54, child: FilledButton(onPressed: loading ? null : _signIn, child: loading ? const SizedBox.square(dimension: 22, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Sign in'))),
                 const SizedBox(height: 18),
-                Center(child: TextButton(onPressed: () {}, child: const Text('Create a farmer account'))),
+                Center(child: TextButton(onPressed: loading ? null : () => context.go('/signup'), child: const Text('Create a farmer account'))),
               ]),
             ),
           ),
