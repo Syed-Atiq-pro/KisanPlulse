@@ -11,7 +11,7 @@ class DashboardPage extends StatelessWidget {
       ('My Farms', Icons.landscape_rounded, 'Manage farms, fields and crops', '/farms'),
       ('Crop Health', Icons.eco_rounded, 'AI disease detection', '/disease'),
       ('Weather', Icons.cloud_rounded, 'Forecast and alerts', '/weather'),
-      ('Irrigation', Icons.water_drop_rounded, 'Smart water planning', null),
+      ('Irrigation', Icons.water_drop_rounded, 'Weather-based water planning', '/irrigation'),
       ('Expenses', Icons.account_balance_wallet_rounded, 'Track farm finances', null),
       ('Market', Icons.storefront_rounded, 'Prices and opportunities', null),
     ];
