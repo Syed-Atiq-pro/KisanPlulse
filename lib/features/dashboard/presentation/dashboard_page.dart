@@ -5,9 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
   Future<void> _logout(BuildContext context) async { await Supabase.instance.client.auth.signOut(); if (context.mounted) context.go('/login'); }
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final cards = [
-      ('My Farms', Icons.landscape_rounded, 'Manage fields and crops', '/farms'),
+      ('My Farms', Icons.landscape_rounded, 'Manage farms, fields and crops', '/farms'),
       ('Crop Health', Icons.eco_rounded, 'AI disease detection', '/disease'),
       ('Weather', Icons.cloud_rounded, 'Forecast and alerts', '/weather'),
       ('Irrigation', Icons.water_drop_rounded, 'Smart water planning', null),
@@ -19,7 +20,7 @@ class DashboardPage extends StatelessWidget {
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Text('Good morning, Farmer', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
         const SizedBox(height: 6), const Text('Your farm intelligence dashboard'), const SizedBox(height: 22),
-        Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [CircleAvatar(radius: 28, backgroundColor: Theme.of(context).colorScheme.primaryContainer, child: const Icon(Icons.agriculture_rounded)), const SizedBox(width: 16), const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Farm health', style: TextStyle(fontWeight: FontWeight.w700)), SizedBox(height: 6), Text('Connect your farm data to unlock personalized insights.')]))]))),
+        Card(child: Padding(padding: const EdgeInsets.all(20), child: Row(children: [CircleAvatar(radius: 28, backgroundColor: Theme.of(context).colorScheme.primaryContainer, child: const Icon(Icons.agriculture_rounded)), const SizedBox(width: 16), const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Farm health', style: TextStyle(fontWeight: FontWeight.w700)), SizedBox(height: 6), Text('Add a farm, field and crop to start building your farm intelligence profile.')]))]))),
         const SizedBox(height: 22),
         GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1.25), itemCount: cards.length, itemBuilder: (context, index) { final item = cards[index]; return Card(child: InkWell(borderRadius: BorderRadius.circular(16), onTap: item.$4 == null ? null : () => context.go(item.$4!), child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [Icon(item.$2, size: 30), const SizedBox(height: 10), Text(item.$1, style: const TextStyle(fontWeight: FontWeight.w700)), const SizedBox(height: 4), Text(item.$3, maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall)])))); }),
       ]),
