@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/disease_models.dart';
 import '../data/disease_service.dart';
@@ -25,12 +26,18 @@ class _DiseasePageState extends State<DiseasePage> {
       final result = await service.analyze(imageBytes: data);
       if (mounted) setState(() { bytes = data; prediction = result; loading = false; });
     } catch (e) {
-      if (mounted) { setState(() => loading = false); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Analysis failed: $e'))); }
+      if (mounted) {
+        setState(() => loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Analysis failed: $e')));
+      }
     }
   }
 
   @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('AI Crop Health')),
+    appBar: AppBar(
+      title: const Text('AI Crop Health'),
+      actions: [IconButton(onPressed: () => context.push('/disease/history'), icon: const Icon(Icons.history_rounded))],
+    ),
     body: ListView(padding: const EdgeInsets.all(20), children: [
       Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(children: [
         if (bytes != null) ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.memory(bytes!, height: 260, width: double.infinity, fit: BoxFit.cover)) else const SizedBox(height: 220, child: Center(child: Icon(Icons.eco_rounded, size: 80))),
