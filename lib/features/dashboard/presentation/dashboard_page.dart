@@ -9,6 +9,7 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cards = [
       ('My Farms', Icons.landscape_rounded, 'Manage farms, fields and crops', '/farms'),
+      ('AI Assistant', Icons.auto_awesome_rounded, 'Personalized farming guidance', '/assistant'),
       ('Crop Health', Icons.eco_rounded, 'AI disease detection', '/disease'),
       ('Weather', Icons.cloud_rounded, 'Forecast and alerts', '/weather'),
       ('Irrigation', Icons.water_drop_rounded, 'Weather-based water planning', '/irrigation'),
