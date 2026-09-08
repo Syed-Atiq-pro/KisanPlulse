@@ -5,13 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
   Future<void> _logout(BuildContext context) async { await Supabase.instance.client.auth.signOut(); if (context.mounted) context.go('/login'); }
-
   @override
   Widget build(BuildContext context) {
     final cards = [
       ('My Farms', Icons.landscape_rounded, 'Manage fields and crops', '/farms'),
       ('Crop Health', Icons.eco_rounded, 'AI disease detection', null),
-      ('Weather', Icons.cloud_rounded, 'Forecast and alerts', null),
+      ('Weather', Icons.cloud_rounded, 'Forecast and alerts', '/weather'),
       ('Irrigation', Icons.water_drop_rounded, 'Smart water planning', null),
       ('Expenses', Icons.account_balance_wallet_rounded, 'Track farm finances', null),
       ('Market', Icons.storefront_rounded, 'Prices and opportunities', null),
