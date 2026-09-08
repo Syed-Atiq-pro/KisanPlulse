@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../data/market_models.dart';
 import '../data/market_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -64,7 +65,7 @@ class _MarketPageState extends State<MarketPage> {
         if (loadingMarkets) const Padding(padding: EdgeInsets.only(top: 8), child: LinearProgressIndicator()),
       ])),
       const SizedBox(height: 18),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Recent prices', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), TextButton.icon(onPressed: () => Navigator.pushNamed(context, '/market/analytics?commodity=${Uri.encodeComponent(commodity.text.trim())}'), icon: const Icon(Icons.analytics_outlined), label: const Text('Analytics'))]),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Recent prices', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), TextButton.icon(onPressed: () => context.push('/market/analytics?commodity=${Uri.encodeComponent(commodity.text.trim())}'), icon: const Icon(Icons.analytics_outlined), label: const Text('Analytics'))]),
       const SizedBox(height: 8),
       FutureBuilder<List<MarketPrice>>(future: prices, builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) return const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator()));
