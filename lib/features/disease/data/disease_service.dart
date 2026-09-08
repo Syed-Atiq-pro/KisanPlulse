@@ -1,34 +1,32 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'disease_models.dart';
 
 class DiseaseService {
-  DiseaseService({this.endpoint});
-  final String? endpoint;
+  DiseaseService({SupabaseClient? client})
+      : _client = client ?? Supabase.instance.client;
+
+  final SupabaseClient _client;
 
   Future<DiseasePrediction> analyze({required List<int> imageBytes}) async {
-    if (endpoint == null || endpoint!.isEmpty) {
-      return const DiseasePrediction(
-        crop: 'Unknown',
-        disease: 'AI service not connected',
-        confidence: 0,
-        advice: [
-          'Connect the secure disease-analysis endpoint before using live diagnosis.',
-          'Use a clear photo of a single leaf in good daylight.',
-        ],
-        warning: 'This is a setup state, not a diagnosis.',
-      );
+    final session = _client.auth.currentSession;
+    if (session == null) {
+      throw Exception('Please sign in before using AI crop diagnosis.');
     }
 
-    final request = http.MultipartRequest('POST', Uri.parse(endpoint!));
-    request.files.add(http.MultipartFile.fromBytes('image', imageBytes, filename: 'leaf.jpg'));
-    final streamed = await request.send().timeout(const Duration(seconds: 30));
-    final response = await http.Response.fromStream(streamed);
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Disease service returned ${response.statusCode}.');
+    final encoded = base64Encode(imageBytes);
+    final response = await _client.functions.invoke(
+      'diagnose-plant',
+      body: {'image_base64': encoded},
+    );
+
+    if (response.status < 200 || response.status >= 300) {
+      throw Exception('Disease service returned ${response.status}.');
     }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = Map<String, dynamic>.from(response.data as Map);
     return DiseasePrediction(
       crop: data['crop'] as String? ?? 'Unknown',
       disease: data['disease'] as String? ?? 'Unknown',
