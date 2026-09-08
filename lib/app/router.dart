@@ -15,6 +15,8 @@ import '../features/irrigation/presentation/irrigation_page.dart';
 import '../features/assistant/presentation/assistant_page.dart';
 import '../features/market/presentation/market_page.dart';
 import '../features/market/presentation/market_analytics_page.dart';
+import '../features/finance/presentation/finance_page.dart';
+import '../features/finance/presentation/finance_analytics_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -40,6 +42,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/assistant', builder: (context, state) => const AssistantPage()),
     GoRoute(path: '/market', builder: (context, state) => const MarketPage()),
     GoRoute(path: '/market/analytics', builder: (context, state) => MarketAnalyticsPage(commodity: state.uri.queryParameters['commodity'] ?? 'Tomato')),
+    GoRoute(path: '/finance', builder: (context, state) => const FinancePage()),
+    GoRoute(path: '/finance/analytics', builder: (context, state) => const FinanceAnalyticsPage()),
   ],
 );
 
