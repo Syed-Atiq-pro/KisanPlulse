@@ -13,6 +13,7 @@ import '../features/disease/presentation/disease_page.dart';
 import '../features/disease/presentation/disease_history_page.dart';
 import '../features/irrigation/presentation/irrigation_page.dart';
 import '../features/assistant/presentation/assistant_page.dart';
+import '../features/market/presentation/market_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -36,6 +37,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/disease/history', builder: (context, state) => const DiseaseHistoryPage()),
     GoRoute(path: '/irrigation', builder: (context, state) => const IrrigationPage()),
     GoRoute(path: '/assistant', builder: (context, state) => const AssistantPage()),
+    GoRoute(path: '/market', builder: (context, state) => const MarketPage()),
   ],
 );
 
